@@ -2,15 +2,28 @@ function addBtn(){
     var morse = document.createElement("div")
     var txt = document.createElement("textarea")
     txt.className="light-body"
-    txt.value="Feel free to type in morse code with a proper key. However, if your are not adequate with morse code, don't waste your time."
+    txt.value="Note: Feel free to type in morse code with a proper key. However, if your are not adequate with morse code, don't waste your time."
     var btn = document.createElement("button")
-    btn.innerText="Cut and Type-in"
+    btn.innerText="Cut Input"
     var btn2 = document.createElement("button")
     btn2.innerText="Encode The Text To Morse"
+
+
+    var globleSpeed = 1
+    var speeder = document.createElement("input")
+    speeder.type="range"
+    speeder.min=33
+    speeder.max=150
+    speeder.value=100
+    var speederContainer = document.createElement("div")
+    speederContainer.innerText="Speed:   "
+    speederContainer.appendChild(speeder)
+
     morse.appendChild(txt)
     morse.appendChild(document.createElement("p"))
     morse.appendChild(btn)
     morse.appendChild(btn2)
+    morse.appendChild(speederContainer)
     document.body.insertBefore(morse, document.body.firstChild)
     btn.focus()
 
@@ -100,13 +113,13 @@ function addBtn(){
 
 
     function getBlinker(f1f2) {
-	var t0=200;
-	var t1=1000;
-	var tInter=200;
-	var tShort=1200;
+	var t0=100;
+	var t1=400;
+	var tInter=150;
+	var tShort=400;
 	var tSpace=3000;
 	var timeouts=[]
-
+	
 	var beemer = f1f2.herald
 	var reader= f1f2.reader
 	var writer= f1f2.writer
@@ -137,7 +150,7 @@ function addBtn(){
 	    var j=0;
 	    while(j < bs.length){
 		var b = bs[j]
-		tvs.push(setTimeout(beemer, t, b))
+		tvs.push(setTimeout(beemer, t, b ))
 		j = j+1
 		if (b=="1") {
 		    var tThis = t1
@@ -146,11 +159,11 @@ function addBtn(){
 		    var tThis = t0
 		}
 		tvs.push(setTimeout(f1, t))
-		t = t+tThis
+		t = t+tThis/globleSpeed
 		tvs.push(setTimeout(f0, t))
-		t = t + tInter
+		t = t + tInter/globleSpeed
 	    }
-	    tvs.push(setTimeout(()=>{writer(text.slice(0,i+1))}, t + tShort ))
+	    tvs.push(setTimeout(()=>{writer(text.slice(0,i+1))}, t + tShort/globleSpeed ))
 	    timeouts = timeouts.concat(tvs)
 	    return t
 	}
@@ -161,10 +174,10 @@ function addBtn(){
 	    timeouts.forEach((n)=>clearTimeout(n))
 	    timeouts=[]
 	    var i=-1;
-	    while (i < text.length){
+	    while (i < text.length-1){
 		i = i+1;
 		if (wdDict[text[i].toLowerCase()]){
-		    time0 = char2Intervals(time0 + tThis, i)
+		    time0 = char2Intervals(time0 + tThis/globleSpeed, i)
 		    tThis = tShort
 		}
 		else {
@@ -172,7 +185,7 @@ function addBtn(){
 		}
 	    }
 	}
-	return starter
+	return {starter:starter}
     }
     
     function showSound(s) {
@@ -187,7 +200,7 @@ function addBtn(){
     }
 
     function showDark(){
-	btn2.style.background="black"
+	btn2.style.background="grey"
     }
     function showLight(){
 	btn2.style.background="orange"
@@ -199,7 +212,8 @@ function addBtn(){
 	txt.value=s
     }
     var blinkStarter = getBlinker({herald:showSound,down:showDark, up:showLight, reader:getText, writer:showText})
-    btn2.onclick = blinkStarter
+    btn2.onclick = blinkStarter.starter
+    speeder.onchange = ()=>{globleSpeed = speeder.value/100}
 }
 
 
