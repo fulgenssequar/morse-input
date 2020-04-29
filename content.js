@@ -4,16 +4,15 @@ function addBtn(){
     txt.className="light-body"
     txt.value="Note: Feel free to type in morse code with a proper key. However, if your are not adequate with morse code, don't waste your time."
     var btn = document.createElement("button")
-    btn.innerText="Cut Input"
+    btn.innerText="Clear For Input"
     var btn2 = document.createElement("button")
     btn2.innerText="Encode The Text To Morse"
 
 
-    var globleSpeed = 1
     var speeder = document.createElement("input")
-    speeder.type="range"
-    speeder.min=33
-    speeder.max=150
+    //speeder.type="range"
+    //speeder.min=33
+    //speeder.max=150
     speeder.value=100
     var speederContainer = document.createElement("div")
     speederContainer.innerText="Speed:   "
@@ -21,18 +20,18 @@ function addBtn(){
 
     morse.appendChild(txt)
     morse.appendChild(document.createElement("p"))
+    morse.appendChild(speederContainer)
     morse.appendChild(btn)
     morse.appendChild(btn2)
-    morse.appendChild(speederContainer)
     document.body.insertBefore(morse, document.body.firstChild)
     btn.focus()
 
-
-    var di = document.createElement("audio")
-    var da = document.createElement("audio")
-    di.src="diii.mp3"
-    da.src="da.mp3"
-    
+    var globleSpeed = 1
+    speeder.onchange = ()=>{
+	if (speeder.value<20) speeder.value=20
+	globleSpeed=speeder.value/100
+    }
+   
     function makePossible(f){
         var shortInterval=200;
         var charInterval=600;
@@ -115,7 +114,7 @@ function addBtn(){
     function getBlinker(f1f2) {
 	var t0=100;
 	var t1=400;
-	var tInter=150;
+	var tInter=100;
 	var tShort=400;
 	var tSpace=3000;
 	var timeouts=[]
@@ -188,16 +187,36 @@ function addBtn(){
 	return {starter:starter}
     }
     
-    function showSound(s) {
-	if (s == "1") {
-	    di.currentTime="0.0"
-	    di.play()
+    function getSounder(){
+	var di1 = document.createElement("audio")
+	var di2 = document.createElement("audio")
+	var da1 = document.createElement("audio")
+	var da2 = document.createElement("audio")
+	di1.src="diii.mp3"
+	di2.src="diii.mp3"
+	da1.src="da.mp3"
+	da2.src="da.mp3"
+
+	var dis=[di1, di2]
+	var das=[da1, da2]
+	var ndi=0
+	var nda=0
+
+	function showSound(s) {
+	    if (s == "1") {
+		dis[ndi].currentTime="0.0"
+		dis[ndi].play()
+		ndi=1-ndi
+	    }
+	    else if (s == "0"){
+		das[nda].currentTime = "0.01"
+		das[nda].play()
+		nda=1-nda
+	    }
 	}
-	else if (s == "0"){
-	    da.currentTime = "0.01"
-	    da.play()
-	}
+	return showSound
     }
+    var showSound=getSounder()
 
     function showDark(){
 	btn2.style.background="grey"
@@ -213,7 +232,6 @@ function addBtn(){
     }
     var blinkStarter = getBlinker({herald:showSound,down:showDark, up:showLight, reader:getText, writer:showText})
     btn2.onclick = blinkStarter.starter
-    speeder.onchange = ()=>{globleSpeed = speeder.value/100}
 }
 
 
