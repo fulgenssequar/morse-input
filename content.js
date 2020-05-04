@@ -113,9 +113,9 @@ function addBtn(){
 
     function getBlinker(f1f2) {
 	var t0=100;
-	var t1=400;
-	var tInter=100;
-	var tShort=400;
+	var t1=300;
+	var tInter=80;
+	var tShort=500;
 	var tSpace=3000;
 	var timeouts=[]
 	
@@ -188,17 +188,18 @@ function addBtn(){
     }
     
     function getSounder(){
-	var di1 = document.createElement("audio")
-	var di2 = document.createElement("audio")
-	var da1 = document.createElement("audio")
-	var da2 = document.createElement("audio")
-	di1.src="diii.mp3"
-	di2.src="diii.mp3"
-	da1.src="da.mp3"
-	da2.src="da.mp3"
+	var n = 5
+	var dis=Array(5)
+	var das=Array(5)
+	while (n>=0){
+	    dis[n] = document.createElement("audio")
+	    das[n] = document.createElement("audio")
+	    dis[n].src="diii.mp3"
+	    das[n].src="da.mp3"
+	    n -= 1
+	}
 
-	var dis=[di1, di2]
-	var das=[da1, da2]
+
 	var ndi=0
 	var nda=0
 
@@ -206,12 +207,12 @@ function addBtn(){
 	    if (s == "1") {
 		dis[ndi].currentTime="0.0"
 		dis[ndi].play()
-		ndi=1-ndi
+		ndi = (ndi+1) % dis.length
 	    }
 	    else if (s == "0"){
 		das[nda].currentTime = "0.01"
 		das[nda].play()
-		nda=1-nda
+		nda=(nda + 1) % das.length
 	    }
 	}
 	return showSound
